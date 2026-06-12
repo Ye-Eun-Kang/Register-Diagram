@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register → draw.io</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 32px 16px;
+    }
+    .app {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 24px;
+    }
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+    header p {
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+    .form-row {
+      margin-bottom: 14px;
+    }
+    .form-row:last-child { margin-bottom: 0; }
+    .form-row label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #444;
+      margin-bottom: 5px;
+    }
+    .form-row label small {
+      font-weight: 400;
+      color: #aaa;
+      margin-left: 4px;
+    }
+    .form-row input[type="text"] {
+      width: 100%;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: #333;
+      transition: border-color 0.15s;
+    }
+    .form-row input[type="text"]:focus {
+      outline: none;
+      border-color: #4a7ef5;
+    }
+    .hint {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding: 0 8px 8px 8px;
+      text-align: left;
+      border-bottom: 1.5px solid #f0f0f0;
+    }
+    tbody tr:first-child td { padding-top: 8px; }
+    tbody td {
+      padding: 3px 4px;
+    }
+    tbody td input[type="text"] {
+      width: 100%;
+      border: 1.5px solid transparent;
+      border-radius: 5px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: #333;
+      background: #fafafa;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    tbody td input[type="text"]:focus {
+      outline: none;
+      border-color: #4a7ef5;
+      background: #fff;
+    }
+    tbody td input[type="text"].error-field {
+      border-color: #e55;
+      background: #fff8f8;
+    }
+    .col-bit { width: 150px; }
+    .col-del { width: 36px; text-align: center; }
+    .btn-del {
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .btn-del:hover { color: #e44; background: #fff0f0; }
+    .btn-add {
+      width: 100%;
+      margin-top: 10px;
+      padding: 9px;
+      background: none;
+      border: 1.5px dashed #d0d0d0;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #999;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-add:hover { border-color: #4a7ef5; color: #4a7ef5; }
+    .error-box {
+      background: #fff3f3;
+      border: 1.5px solid #f5b8b8;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #c33;
+      display: none;
+      margin-bottom: 12px;
+    }
+    .error-box.visible { display: block; }
+    .btn-generate {
+      width: 100%;
+      padding: 13px;
+      background: #4a7ef5;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-generate:hover { background: #3568e0; }
+    .btn-generate:active { transform: scale(0.99); }
+    .success-toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e8a4c;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+    .success-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Register → draw.io</h1>
+      <p>Field 정보를 입력하고 .drawio 파일을 생성합니다.</p>
+    </header>
+
+    <div class="card">
+      <div class="card-title">레지스터 정보</div>
+      <div class="form-row">
+        <label>Register Name <span style="color:#e44">*</span></label>
+        <input type="text" id="regName"
+               placeholder="예: Control Register (CTRL)" />
+      </div>
+      <div class="form-row">
+        <label>Address <small>(선택)</small></label>
+        <input type="text" id="regAddr"
+               placeholder="예: BASE + 0x04" />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Bit Fields</div>
+      <p class="hint">Field Name을 비워두면 자동으로 Reserved 처리됩니다. 나머지 빈 비트도 자동 채웁니다.</p>
+      <table>
+        <thead>
+          <tr>
+            <th class="col-bit">Bit Range</th>
+            <th>Field Name</th>
+            <th class="col-del"></th>
+          </tr>
+        </thead>
+        <tbody id="fieldBody"></tbody>
+      </table>
+      <button class="btn-add" onclick="addRow()">+ 행 추가</button>
+    </div>
+
+    <div id="errorBox" class="error-box"></div>
+    <button class="btn-generate" onclick="generate()">↓ draw.io 파일 생성</button>
+  </div>
+
+  <div id="toast" class="success-toast"></div>
+
+  <script>
+    // ── draw.io 생성 상수 (docx_to_drawio.py와 동일) ──────────────
+    const BIT_W = 18, LABEL_H = 16, FIELD_H = 36, REG_GAP = 30;
+    const MX = 10, MY = 10;
+    const BRACKET_BASE = 12, BRACKET_STEP = 13, TICK_W = 8;
+    const BORDER = '#AAAAAA';
+    const CHAR_W_PX = 5.5, CELL_PAD = 6;
+
+    const RSV_STYLE =
+      `rounded=0;whiteSpace=wrap;html=1;fillColor=#E6E6E6;strokeColor=${BORDER};` +
+      'fontSize=8;fontColor=#BBBBBB;align=center;verticalAlign=middle;';
+    const NAMED_STYLE =
+      `rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=${BORDER};` +
+      'fontFamily=Helvetica;fontSize=9;fontStyle=0;align=center;verticalAlign=middle;';
+    const EMPTY_STYLE =
+      `rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=${BORDER};`;
+    const NUM_STYLE =
+      'text;html=1;strokeColor=none;fillColor=none;fontSize=8;verticalAlign=bottom;';
+    const BRACE_LABEL =
+      'text;html=1;strokeColor=none;fillColor=none;fontFamily=Helvetica;' +
+      'fontSize=9;fontStyle=0;align=left;verticalAlign=middle;';
+    const BRACE_LABEL_LEFT =
+      'text;html=1;strokeColor=none;fillColor=none;fontFamily=Helvetica;' +
+      'fontSize=9;fontStyle=0;align=right;verticalAlign=middle;';
+    const LINE_STYLE =
+      'endArrow=none;html=1;strokeColor=#000000;strokeWidth=1;';
+
+    const RESERVED_WORDS = new Set([
+      'reserved', 'rsvd', 'rsv', 'res', 'unused', '-', '—', '–', 'n/a', ''
+    ]);
+
+    // ── XML 특수문자 이스케이프 ────────────────────────────────────
+    function esc(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ── 비트 범위 파싱 ────────────────────────────────────────────
+    function parseBitRange(text) {
+      const t = text.trim().replace(/[\[\]()]/g, '')
+                    .replace(/\.\./g, ':').replace(/~/g, ':');
+      const m1 = t.match(/^(\d+)\s*[:\-]\s*(\d+)$/);
+      if (m1) {
+        const a = parseInt(m1[1]), b = parseInt(m1[2]);
+        return [Math.max(a, b), Math.min(a, b)];
+      }
+      const m2 = t.match(/^(\d+)$/);
+      if (m2) {
+        const b = parseInt(m2[1]);
+        if (b >= 0 && b <= 63) return [b, b];
+      }
+      return null;
+    }
+
+    // ── 브래킷 필요 여부 ──────────────────────────────────────────
+    function needsBracket(fname, bits) {
+      if (!fname || fname === '-') return false;
+      return (fname.length * CHAR_W_PX) > (bits * BIT_W - CELL_PAD);
+    }
+
+    // ── 빈 비트 범위를 Reserved('-')로 채움 ───────────────────────
+    function fillReservedGaps(fields, totalBits = 32) {
+      if (!fields.length) return [['-', totalBits - 1, 0]];
+      const sorted = [...fields].sort((a, b) => b[1] - a[1]);
+      const result = [];
+      let cursor = totalBits - 1;
+      for (const [fname, msb, lsb] of sorted) {
+        if (msb < cursor) result.push(['-', cursor, msb + 1]);
+        result.push([fname, msb, lsb]);
+        cursor = lsb - 1;
+      }
+      if (cursor >= 0) result.push(['-', cursor, 0]);
+      return result;
+    }
+
+    // ── draw.io XML 생성 ──────────────────────────────────────────
+    function generateDrawioXML(registers) {
+      let cid = 2;
+      let cells = '';
+
+      function vc(val, style, x, y, w, h) {
+        cells +=
+          `    <mxCell id="${cid++}" value="${esc(val)}" style="${esc(style)}" vertex="1" parent="1">\n` +
+          `      <mxGeometry x="${x}" y="${y}" width="${w}" height="${h}" as="geometry" />\n` +
+          `    </mxCell>\n`;
+      }
+
+      function line(x1, y1, x2, y2) {
+        cells +=
+          `    <mxCell id="${cid++}" value="" style="${esc(LINE_STYLE)}" edge="1" parent="1">\n` +
+          `      <mxGeometry relative="1" as="geometry">\n` +
+          `        <mxPoint x="${x1}" y="${y1}" as="sourcePoint" />\n` +
+          `        <mxPoint x="${x2}" y="${y2}" as="targetPoint" />\n` +
+          `      </mxGeometry>\n` +
+          `    </mxCell>\n`;
+      }
+
+      let y = MY;
+
+      for (const reg of registers) {
+        const yLbl = y, yFld = y + LABEL_H, yBot = yFld + FIELD_H;
+
+        const bracketList = reg.fields.filter(
+          ([fn, ms, ls]) => needsBracket(fn, ms - ls + 1)
+        );
+        const n = bracketList.length;
+        const leftN  = Math.floor(n / 2);
+        const rightN = n - leftN;
+        const bracketInfo = {};
+        bracketList.slice(0, leftN).forEach(([fn, ms], i) => {
+          bracketInfo[`${fn}:${ms}`] = { depth: i, side: 'left' };
+        });
+        bracketList.slice(leftN).forEach(([fn, ms], i) => {
+          bracketInfo[`${fn}:${ms}`] = { depth: rightN - 1 - i, side: 'right' };
+        });
+
+        for (const [fname, msb, lsb] of reg.fields) {
+          const bits = msb - lsb + 1;
+          const fx = MX + (31 - msb) * BIT_W;
+          const fw = bits * BIT_W;
+          const useBracket = needsBracket(fname, bits);
+
+          if (fname === '-') {
+            vc('', RSV_STYLE, fx, yFld, fw, FIELD_H);
+          } else if (useBracket) {
+            vc('', EMPTY_STYLE, fx, yFld, fw, FIELD_H);
+          } else {
+            vc(fname, NAMED_STYLE, fx, yFld, fw, FIELD_H);
+          }
+
+          if (bits === 1) {
+            vc(String(msb), NUM_STYLE + 'align=center;', fx, yLbl, BIT_W, LABEL_H);
+          } else {
+            vc(String(msb), NUM_STYLE + 'align=left;',  fx, yLbl, fw, LABEL_H);
+            vc(String(lsb), NUM_STYLE + 'align=right;', fx, yLbl, fw, LABEL_H);
+          }
+
+          if (useBracket) {
+            const info  = bracketInfo[`${fname}:${msb}`] || { depth: 0, side: 'right' };
+            const vlen  = BRACKET_BASE + info.depth * BRACKET_STEP;
+            const cx    = fx + Math.floor(fw / 2);
+            const ty    = yBot + vlen;
+            line(cx, yBot, cx, ty);
+            if (info.side === 'right') {
+              line(cx, ty, cx + TICK_W, ty);
+              vc(fname, BRACE_LABEL, cx + TICK_W + 2, ty - 8, 60, 16);
+            } else {
+              line(cx, ty, cx - TICK_W, ty);
+              vc(fname, BRACE_LABEL_LEFT, cx - TICK_W - 62, ty - 8, 60, 16);
+            }
+          }
+        }
+
+        const maxGroup = Math.max(leftN, rightN);
+        const maxDepth = maxGroup > 0 ? BRACKET_BASE + (maxGroup - 1) * BRACKET_STEP : 0;
+        y = yBot + maxDepth + 16 + REG_GAP;
+      }
+
+      return `<?xml version="1.0" encoding="UTF-8"?>
+<mxfile>
+  <diagram name="Register Map">
+    <mxGraphModel dx="1500" dy="900" grid="0" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="0" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+${cells.trimEnd()}
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>`;
+    }
+
+    // ── 파일명 생성 (Python safe_filename과 동일 로직) ─────────────
+    function safeFilename(name) {
+      const m = name.match(/\(([A-Z0-9_]+)\)/);
+      if (m) return m[1];
+      return name.replace(/[^\w\-]/g, '_').replace(/^_+|_+$/g, '') || 'register';
+    }
+
+    // ── 오류 메시지 표시 ──────────────────────────────────────────
+    function showError(msg) {
+      const el = document.getElementById('errorBox');
+      el.textContent = msg;
+      el.classList.toggle('visible', !!msg);
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2800);
+    }
+
+    // ── 행 추가 / 삭제 ────────────────────────────────────────────
+    let _rowId = 0;
+
+    function addRow(bitRange = '', fieldName = '') {
+      const tbody = document.getElementById('fieldBody');
+      const id = 'r' + (_rowId++);
+      const tr = document.createElement('tr');
+      tr.id = id;
+      tr.innerHTML =
+        `<td class="col-bit">` +
+          `<input type="text" placeholder="예: 31:24 또는 7" value="${esc(bitRange)}" />` +
+        `</td>` +
+        `<td>` +
+          `<input type="text" placeholder="Field Name (공백 = Reserved)" value="${esc(fieldName)}" />` +
+        `</td>` +
+        `<td class="col-del">` +
+          `<button class="btn-del" onclick="deleteRow('${id}')" title="행 삭제">×</button>` +
+        `</td>`;
+      tbody.appendChild(tr);
+    }
+
+    function deleteRow(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    // ── 생성 버튼 ─────────────────────────────────────────────────
+    function generate() {
+      showError('');
+      document.querySelectorAll('#fieldBody input').forEach(i => i.classList.remove('error-field'));
+
+      const name = document.getElementById('regName').value.trim();
+      const addr = document.getElementById('regAddr').value.trim();
+
+      if (!name) {
+        showError('Register Name을 입력해주세요.');
+        document.getElementById('regName').focus();
+        return;
+      }
+
+      const rows = document.querySelectorAll('#fieldBody tr');
+      if (!rows.length) {
+        showError('행을 1개 이상 추가해주세요.');
+        return;
+      }
+
+      const namedFields = [];
+      let hasAnyRow = false;
+
+      for (const row of rows) {
+        const inputs = row.querySelectorAll('input');
+        const bitText = inputs[0].value.trim();
+        const fname   = inputs[1].value.trim();
+
+        if (!bitText) continue;
+        hasAnyRow = true;
+
+        const br = parseBitRange(bitText);
+        if (!br) {
+          showError(`잘못된 Bit Range: "${bitText}"\n형식 예시: 31:24, 7:0, 3`);
+          inputs[0].classList.add('error-field');
+          inputs[0].focus();
+          return;
+        }
+
+        const [msb, lsb] = br;
+        const isReserved = RESERVED_WORDS.has(fname.toLowerCase());
+        if (!isReserved) {
+          namedFields.push([fname, msb, lsb]);
+        }
+      }
+
+      if (!hasAnyRow) {
+        showError('Bit Range를 1개 이상 입력해주세요.');
+        return;
+      }
+
+      // 비트 중복 검사
+      const used = new Array(64).fill(null);
+      for (const [fn, msb, lsb] of namedFields) {
+        for (let b = lsb; b <= msb; b++) {
+          if (used[b] !== null) {
+            showError(`비트 ${b}가 중복 정의되었습니다. ("${used[b]}" 과 "${fn}")`);
+            return;
+          }
+          used[b] = fn;
+        }
+      }
+
+      const filledFields = fillReservedGaps(namedFields);
+      const register = { name, address: addr, fields: filledFields };
+      const xml = generateDrawioXML([register]);
+      const filename = safeFilename(name) + '.drawio';
+
+      const blob = new Blob([xml], { type: 'application/xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast(`✓ ${filename} 저장됨`);
+    }
+
+    // 키보드 Enter로 행 추가
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.target.closest('#fieldBody')) {
+        const rows = [...document.querySelectorAll('#fieldBody tr')];
+        const last = rows[rows.length - 1];
+        if (last && e.target.closest('tr') === last) {
+          e.preventDefault();
+          addRow();
+          const newInputs = document.querySelectorAll('#fieldBody tr:last-child input');
+          if (newInputs.length) newInputs[0].focus();
+        }
+      }
+    });
+
+    // 초기 행 3개
+    addRow('31:24', '');
+    addRow('23:16', '');
+    addRow('15:0', '');
+  </script>
+</body>
+</html>
