@@ -235,28 +235,30 @@
 
   <script>
     // ── draw.io 생성 상수 (docx_to_drawio.py와 동일) ──────────────
-    const BIT_W = 18, LABEL_H = 16, FIELD_H = 36, REG_GAP = 30;
+    // 2026-06-12: Confluence 삽입 시 너무 작아 ≈1.55배 확대 (전체 폭 596→916px).
+    //             project.14 docx_to_drawio_v2.py와 동일 값 유지할 것.
+    const BIT_W = 28, LABEL_H = 22, FIELD_H = 52, REG_GAP = 46;
     const MX = 10, MY = 10;
-    const BRACKET_BASE = 12, BRACKET_STEP = 13, TICK_W = 8;
+    const BRACKET_BASE = 18, BRACKET_STEP = 20, TICK_W = 12;
     const BORDER = '#AAAAAA';
-    const CHAR_W_PX = 5.5, CELL_PAD = 6;
+    const CHAR_W_PX = 8.5, CELL_PAD = 9;
 
     const RSV_STYLE =
       `rounded=0;whiteSpace=wrap;html=1;fillColor=#E6E6E6;strokeColor=${BORDER};` +
-      'fontSize=8;fontColor=#BBBBBB;align=center;verticalAlign=middle;';
+      'fontSize=12;fontColor=#BBBBBB;align=center;verticalAlign=middle;';
     const NAMED_STYLE =
       `rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=${BORDER};` +
-      'fontFamily=Helvetica;fontSize=9;fontStyle=0;align=center;verticalAlign=middle;';
+      'fontFamily=Helvetica;fontSize=13;fontStyle=0;align=center;verticalAlign=middle;';
     const EMPTY_STYLE =
       `rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=${BORDER};`;
     const NUM_STYLE =
-      'text;html=1;strokeColor=none;fillColor=none;fontSize=8;verticalAlign=bottom;';
+      'text;html=1;strokeColor=none;fillColor=none;fontSize=12;verticalAlign=bottom;';
     const BRACE_LABEL =
       'text;html=1;strokeColor=none;fillColor=none;fontFamily=Helvetica;' +
-      'fontSize=9;fontStyle=0;align=left;verticalAlign=middle;';
+      'fontSize=13;fontStyle=0;align=left;verticalAlign=middle;';
     const BRACE_LABEL_LEFT =
       'text;html=1;strokeColor=none;fillColor=none;fontFamily=Helvetica;' +
-      'fontSize=9;fontStyle=0;align=right;verticalAlign=middle;';
+      'fontSize=13;fontStyle=0;align=right;verticalAlign=middle;';
     const LINE_STYLE =
       'endArrow=none;html=1;strokeColor=#000000;strokeWidth=1;';
 
@@ -381,17 +383,17 @@
             line(cx, yBot, cx, ty);
             if (info.side === 'right') {
               line(cx, ty, cx + TICK_W, ty);
-              vc(fname, BRACE_LABEL, cx + TICK_W + 2, ty - 8, 60, 16);
+              vc(fname, BRACE_LABEL, cx + TICK_W + 3, ty - 11, 90, 22);
             } else {
               line(cx, ty, cx - TICK_W, ty);
-              vc(fname, BRACE_LABEL_LEFT, cx - TICK_W - 62, ty - 8, 60, 16);
+              vc(fname, BRACE_LABEL_LEFT, cx - TICK_W - 93, ty - 11, 90, 22);
             }
           }
         }
 
         const maxGroup = Math.max(leftN, rightN);
         const maxDepth = maxGroup > 0 ? BRACKET_BASE + (maxGroup - 1) * BRACKET_STEP : 0;
-        y = yBot + maxDepth + 16 + REG_GAP;
+        y = yBot + maxDepth + 22 + REG_GAP;
       }
 
       return `<?xml version="1.0" encoding="UTF-8"?>
